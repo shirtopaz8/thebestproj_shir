@@ -15,28 +15,89 @@ st.set_page_config(
 # Enforce Left-to-Right layout & elegant styling
 st.markdown("""
     <style>
-    html, body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"] {
+    /* 1. Global Reset & Dark Maroon Theme */
+    html, body, [data-testid="stAppViewContainer"] {
+        background: linear-gradient(135deg, #1A0003 0%, #38000A 50%, #100003 100%) !important;
+        color: #F0E6D2 !important;
+        font-family: 'Cinzel', 'Georgia', serif !important;
         direction: ltr !important;
         text-align: left !important;
     }
+    
+    /* 2. Sidebar Cinematic Styling */
+    [data-testid="stSidebar"] {
+        background-color: #240006 !important;
+        border-right: 1px solid #740001 !important;
+        box-shadow: 5px 0 15px rgba(0,0,0,0.5);
+    }
+    
+    [data-testid="stSidebar"] * {
+        color: #E2C974 !important;
+    }
+
+    /* 3. Gold Glowing Titles */
     .main-title {
-        color: #740001;
+        color: #FCE181;
         font-family: 'Georgia', serif;
-        font-size: 2.5rem;
-        font-weight: bold;
+        font-size: 3rem;
+        font-weight: 700;
+        text-align: center;
+        letter-spacing: 2px;
+        text-shadow: 0 0 10px rgba(252, 225, 129, 0.4), 0 0 20px rgba(116, 0, 1, 0.8);
+        margin-top: 10px;
         margin-bottom: 5px;
     }
+    
     .sub-title {
-        color: #555555;
+        color: #D3A625;
         font-size: 1.1rem;
-        margin-bottom: 25px;
+        text-align: center;
+        margin-bottom: 30px;
+        font-style: italic;
+        opacity: 0.9;
     }
+
+    /* 4. Movie-Card Glassmorphism Design */
     .metric-card {
-        background-color: #f8f9fa;
-        border-left: 5px solid #740001;
-        padding: 15px;
+        background: rgba(40, 0, 8, 0.65);
+        border: 1px solid #D3A625;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        backdrop-filter: blur(4px);
+        text-align: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .metric-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 0 15px rgba(211, 166, 37, 0.4);
+    }
+
+    /* 5. Custom Number Input Buttons */
+    div[data-baseweb="input"] {
+        background-color: #38000A !important;
+        border: 1px solid #D3A625 !important;
+        color: #FFF !important;
+        border-radius: 6px;
+    }
+
+    button[title="Increase value"], button[title="Decrease value"] {
+        background-color: #740001 !important;
+        color: #FCE181 !important;
+        border: 1px solid #D3A625 !important;
+    }
+
+    /* 6. Expanders and Tables */
+    .stTable {
+        background: rgba(30, 0, 5, 0.8) !important;
         border-radius: 8px;
-        box-shadow: 0px 2px 5px rgba(0,0,0,0.05);
+        border: 1px solid #740001;
+    }
+
+    /* Hide Streamlit Default Header/Footer for immersive feel */
+    header, footer {
+        visibility: hidden;
     }
     </style>
 """, unsafe_allow_html=True)
