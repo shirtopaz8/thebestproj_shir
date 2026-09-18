@@ -78,7 +78,7 @@ st.markdown("""
     div[data-baseweb="input"] {
         background-color: #38000A !important;
         border: 1px solid #D3A625 !important;
-        color: #FFF !important;
+        color: #D3A625 !important;
         border-radius: 6px;
     }
 
