@@ -6,15 +6,12 @@ import plotly.graph_objects as go
 # Page layout setup
 st.set_page_config(page_title="Quidditch Skill Predictor", page_icon="🧹")
 
-# Force full Left-to-Right layout to fix inverted slider behavior
+# Force Left-to-Right layout
 st.markdown("""
     <style>
     html, body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"] {
         direction: ltr !important;
         text-align: left !important;
-    }
-    div[data-baseweb="slider"] {
-        direction: ltr !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -26,9 +23,15 @@ st.write("A simple 2-variable Linear Regression model predicting Quidditch Skill
 w = 0.2644254174662321
 b = 4.130997851814717
 
-# User Input (Single Feature X)
+# User Input (Number input with + / - buttons instead of a slider)
 st.sidebar.header("User Input")
-x_input = st.sidebar.slider("Select Bravery Level (X):", min_value=1, max_value=10, value=7, step=1)
+x_input = st.sidebar.number_input(
+    "Select Bravery Level (X):", 
+    min_value=1, 
+    max_value=10, 
+    value=7, 
+    step=1
+)
 
 # Linear Regression Formula (Single Target Y)
 y_prediction = w * x_input + b
