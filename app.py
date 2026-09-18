@@ -18,26 +18,26 @@ st.markdown("""
     /* 1. Global Reset & Dark Maroon Theme */
     html, body, [data-testid="stAppViewContainer"] {
         background: linear-gradient(135deg, #1A0003 0%, #38000A 50%, #100003 100%) !important;
-        color: #F0E6D2 !important;
+        color: #FCE181 !important;
         font-family: 'Cinzel', 'Georgia', serif !important;
         direction: ltr !important;
         text-align: left !important;
     }
     
-    /* 2. Sidebar Cinematic Styling */
+    /* 2. Sidebar & Labels Styling (צהוב בהיר לכל הכתוביות) */
     [data-testid="stSidebar"] {
         background-color: #240006 !important;
         border-right: 1px solid #740001 !important;
         box-shadow: 5px 0 15px rgba(0,0,0,0.5);
     }
     
-    [data-testid="stSidebar"] * {
-        color: #E2C974 !important;
+    [data-testid="stSidebar"] *, label, .stWidgetLabel, p {
+        color: #FCE181 !important; /* שינוי כל הטקסטים והלייבלים לצהוב */
     }
 
-    /* 3. Gold Glowing Titles */
+    /* 3. Gold Glowing Titles & Subtitles */
     .main-title {
-        color: #FCE181;
+        color: #FCE181 !important;
         font-family: 'Georgia', serif;
         font-size: 3rem;
         font-weight: 700;
@@ -49,15 +49,14 @@ st.markdown("""
     }
     
     .sub-title {
-        color: #D3A625;
+        color: #D3A625 !important; /* צהוב-זהב בהיר לכתובית המשנה */
         font-size: 1.1rem;
         text-align: center;
         margin-bottom: 30px;
         font-style: italic;
-        opacity: 0.9;
     }
 
-    /* 4. Movie-Card Glassmorphism Design */
+    /* 4. Movie-Card Glassmorphism & Metrics Text */
     .metric-card {
         background: rgba(40, 0, 8, 0.65);
         border: 1px solid #D3A625;
@@ -69,17 +68,20 @@ st.markdown("""
         transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
     
-    .metric-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 0 15px rgba(211, 166, 37, 0.4);
+    /* טקסטים קטנים וכותרות בתוך כרטיסיות ה-Metric */
+    .metric-card *, [data-testid="stMetricLabel"], [data-testid="stMetricValue"] {
+        color: #FCE181 !important;
     }
 
-    /* 5. Custom Number Input Buttons */
+    /* 5. Custom Number Input Box & Buttons */
     div[data-baseweb="input"] {
         background-color: #38000A !important;
         border: 1px solid #D3A625 !important;
-        color: #D3A625 !important;
         border-radius: 6px;
+    }
+
+    div[data-baseweb="input"] input {
+        color: #FCE181 !important; /* צבע המספר בתוך תיבת הקלט */
     }
 
     button[title="Increase value"], button[title="Decrease value"] {
@@ -88,14 +90,12 @@ st.markdown("""
         border: 1px solid #D3A625 !important;
     }
 
-    /* 6. Expanders and Tables */
-    .stTable {
-        background: rgba(30, 0, 5, 0.8) !important;
-        border-radius: 8px;
-        border: 1px solid #740001;
+    /* 6. Expanders, Markdown & Tables Text */
+    .stTable, div[data-testid="stExpander"] * {
+        color: #FCE181 !important;
     }
 
-    /* Hide Streamlit Default Header/Footer for immersive feel */
+    /* Hide Streamlit Header/Footer */
     header, footer {
         visibility: hidden;
     }
@@ -185,9 +185,10 @@ fig.add_trace(go.Scatter(
 fig.update_layout(
     paper_bgcolor='rgba(0,0,0,0)',
     plot_bgcolor='rgba(30,0,5,0.5)',
-    font=dict(color='#F0E6D2'),
-    xaxis=dict(title="Bravery Level (X)", gridcolor='#4A000D', zerolinecolor='#740001'),
-    yaxis=dict(title="Quidditch Skill (Y)", gridcolor='#4A000D', zerolinecolor='#740001'),
+    font=dict(color='#FCE181'), # צבע פונט צהוב לכל הטקסטים בגרף
+    xaxis=dict(title="Bravery Level (X)", gridcolor='#4A000D', zerolinecolor='#740001', color='#FCE181'),
+    yaxis=dict(title="Quidditch Skill (Y)", gridcolor='#4A000D', zerolinecolor='#740001', color='#FCE181'),
+    legend=dict(font=dict(color='#FCE181')),
     margin=dict(l=20, r=20, t=30, b=20)
 )
 
