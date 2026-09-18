@@ -182,14 +182,15 @@ fig.add_trace(go.Scatter(
     name='Current Prediction Point',
     marker=dict(color='#D3A625', size=14, symbol='star')
 ))
-
 fig.update_layout(
-    xaxis_title="Bravery Level (X)",
-    yaxis_title="Quidditch Skill (Y)",
-    template="plotly_white",
-    hovermode="x unified",
+    paper_bgcolor='rgba(0,0,0,0)',
+    plot_bgcolor='rgba(30,0,5,0.5)',
+    font=dict(color='#F0E6D2'),
+    xaxis=dict(title="Bravery Level (X)", gridcolor='#4A000D', zerolinecolor='#740001'),
+    yaxis=dict(title="Quidditch Skill (Y)", gridcolor='#4A000D', zerolinecolor='#740001'),
     margin=dict(l=20, r=20, t=30, b=20)
 )
+
 
 st.plotly_chart(fig, use_container_width=True)
 
