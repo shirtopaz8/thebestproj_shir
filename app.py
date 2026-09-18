@@ -6,6 +6,19 @@ import plotly.graph_objects as go
 # Page layout setup
 st.set_page_config(page_title="Quidditch Skill Predictor", page_icon="🧹")
 
+# Force Left-to-Right (LTR) layout for the sliders
+st.markdown("""
+    <style>
+    div[data-testid="stSidebar"] {
+        direction: ltr;
+        text-align: left;
+    }
+    .stSlider {
+        direction: ltr;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 st.title("🧹 Quidditch Skill Predictor")
 st.write("A simple 2-variable Linear Regression model predicting Quidditch Skills based on Bravery.")
 
