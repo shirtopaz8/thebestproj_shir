@@ -7,39 +7,38 @@ import plotly.graph_objects as go
 # 1. Page Configuration & Custom CSS Styling
 # ---------------------------------------------------------
 st.set_page_config(
-    page_title="Quidditch Skill Predictor", 
+    page_title="Quidditch Skill Predictor & Game", 
     page_icon="🧹",
     layout="wide"
 )
 
-# Enforce Left-to-Right layout & elegant styling
 st.markdown("""
     <style>
     /* 1. Global Reset & Dark Maroon Theme */
     html, body, [data-testid="stAppViewContainer"] {
         background: linear-gradient(135deg, #1A0003 0%, #38000A 50%, #100003 100%) !important;
         color: #FCE181 !important;
-        font-family: 'Cinzel', 'Georgia', serif !important;
+        font-family: 'Georgia', serif !important;
         direction: ltr !important;
         text-align: left !important;
     }
     
-    /* 2. Sidebar & Labels Styling (צהוב בהיר לכל הכתוביות) */
+    /* 2. Sidebar & Labels Styling */
     [data-testid="stSidebar"] {
         background-color: #240006 !important;
         border-right: 1px solid #740001 !important;
         box-shadow: 5px 0 15px rgba(0,0,0,0.5);
     }
     
-    [data-testid="stSidebar"] *, label, .stWidgetLabel, p {
-        color: #FCE181 !important; /* שינוי כל הטקסטים והלייבלים לצהוב */
+    [data-testid="stSidebar"] *, label, .stWidgetLabel, p, h1, h2, h3, h4 {
+        color: #FCE181 !important;
     }
 
-    /* 3. Gold Glowing Titles & Subtitles */
+    /* 3. Gold Glowing Titles */
     .main-title {
         color: #FCE181 !important;
         font-family: 'Georgia', serif;
-        font-size: 3rem;
+        font-size: 2.8rem;
         font-weight: 700;
         text-align: center;
         letter-spacing: 2px;
@@ -49,14 +48,14 @@ st.markdown("""
     }
     
     .sub-title {
-        color: #D3A625 !important; /* צהוב-זהב בהיר לכתובית המשנה */
+        color: #D3A625 !important;
         font-size: 1.1rem;
         text-align: center;
-        margin-bottom: 30px;
+        margin-bottom: 25px;
         font-style: italic;
     }
 
-    /* 4. Movie-Card Glassmorphism & Metrics Text */
+    /* 4. Metric Cards & Game Boxes */
     .metric-card {
         background: rgba(40, 0, 8, 0.65);
         border: 1px solid #D3A625;
@@ -65,15 +64,14 @@ st.markdown("""
         box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
         backdrop-filter: blur(4px);
         text-align: center;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        margin-bottom: 15px;
     }
     
-    /* טקסטים קטנים וכותרות בתוך כרטיסיות ה-Metric */
     .metric-card *, [data-testid="stMetricLabel"], [data-testid="stMetricValue"] {
         color: #FCE181 !important;
     }
 
-    /* 5. Custom Number Input Box & Buttons */
+    /* 5. Custom Inputs & Buttons */
     div[data-baseweb="input"] {
         background-color: #38000A !important;
         border: 1px solid #D3A625 !important;
@@ -81,7 +79,7 @@ st.markdown("""
     }
 
     div[data-baseweb="input"] input {
-        color: #FCE181 !important; /* צבע המספר בתוך תיבת הקלט */
+        color: #FCE181 !important;
     }
 
     button[title="Increase value"], button[title="Decrease value"] {
@@ -90,9 +88,29 @@ st.markdown("""
         border: 1px solid #D3A625 !important;
     }
 
-    /* 6. Expanders, Markdown & Tables Text */
+    .stButton > button {
+        background: linear-gradient(135deg, #740001 0%, #4A000D 100%) !important;
+        color: #FCE181 !important;
+        border: 1px solid #D3A625 !important;
+        font-weight: bold;
+        border-radius: 8px;
+        padding: 10px 24px;
+        transition: all 0.3s ease;
+    }
+    .stButton > button:hover {
+        background: linear-gradient(135deg, #D3A625 0%, #740001 100%) !important;
+        color: #1A0003 !important;
+        box-shadow: 0 0 10px #D3A625;
+    }
+
+    /* 6. Tabs & Tables Styling */
     .stTable, div[data-testid="stExpander"] * {
         color: #FCE181 !important;
+    }
+    
+    button[data-baseweb="tab"] {
+        color: #D3A625 !important;
+        font-weight: bold;
     }
 
     /* Hide Streamlit Header/Footer */
@@ -103,122 +121,243 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Title & Subtitle
-st.markdown('<div class="main-title">🧹 Quidditch Skill Predictor</div>', unsafe_allow_html=True)
-st.markdown('<div class="sub-title">Predicting student Quidditch Performance ($Y$) based on their Bravery level ($X$) using Linear Regression.</div>', unsafe_allow_html=True)
-
-st.divider()
+st.markdown('<div class="main-title">🧹 Quidditch Skill Predictor v2.0</div>', unsafe_allow_html=True)
+st.markdown('<div class="sub-title">Predicting Quidditch Performance using 2 Features (Bravery & Dark Arts Knowledge) & Game Mode</div>', unsafe_allow_html=True)
 
 # ---------------------------------------------------------
-# 2. Model Parameters & Loss Metrics (From Notebook)
+# 2. Model Parameters & Dataset Samples
 # ---------------------------------------------------------
-# Model Weights (y = w * x + b)
-w = 0.2644254174662321
-b = 4.130997851814717
+w1 = 0.36043519346829017      # Weight for Bravery
+w2 = 0.35451012143880983      # Weight for Dark Arts Knowledge
+b = 2.216231827015582         # Bias
 
-# Loss Values from Notebook (MAE / Absolute Error)
-baseline_loss = 2.2362
-model_loss = 2.1522
+# Loss Values
+baseline_pred = 5.46
+loss_baseline = 2.2362399999999996
+loss_1feature = 2.152228291283019
+loss_2features = 1.991763460854045
 
-# ---------------------------------------------------------
-# 3. Sidebar - Input Section (+ / - Buttons)
-# ---------------------------------------------------------
-st.sidebar.header("🧙 Input Feature")
-st.sidebar.write("Adjust the student's Bravery level below:")
-
-x_input = st.sidebar.number_input(
-    "Select Bravery Level (X):", 
-    min_value=1, 
-    max_value=10, 
-    value=7, 
-    step=1
-)
-
-# Prediction Formula: y = w * x + b
-y_prediction = w * x_input + b
+# 5 Dataset Samples for Game
+GAME_DATA = [
+    {"student_id": 0, "blood_status": "Half-blood", "house": "Gryffindor", "bravery": 9, "dark_arts": 0, "actual_y": 8},
+    {"student_id": 1, "blood_status": "Muggle-born", "house": "Ravenclaw", "bravery": 6, "dark_arts": 5, "actual_y": 8},
+    {"student_id": 2, "blood_status": "Pure-blood", "house": "Hufflepuff", "bravery": 1, "dark_arts": 1, "actual_y": 4},
+    {"student_id": 3, "blood_status": "Pure-blood", "house": "Gryffindor", "bravery": 9, "dark_arts": 1, "actual_y": 10},
+    {"student_id": 4, "blood_status": "Muggle-born", "house": "Ravenclaw", "bravery": 5, "dark_arts": 3, "actual_y": 7}
+]
 
 # ---------------------------------------------------------
-# 4. Results Display (Section 5a & 5b of Guidelines)
+# 3. Main Navigation (Tabs)
 # ---------------------------------------------------------
-st.subheader("🎯 Prediction Output")
+tab1, tab2 = st.tabs(["🔮 Model Predictor & Analysis", "🎮 Beat the Model Game"])
 
-col1, col2 = st.columns(2)
+# =========================================================
+# TAB 1: PREDICTOR & MODEL ANALYSIS
+# =========================================================
+with tab1:
+    st.sidebar.header("🧙 Input Features")
+    st.sidebar.write("Adjust the student's attributes below:")
 
-with col1:
-    st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-    st.metric("Input Bravery Level (X)", f"{x_input} / 10")
-    st.markdown('</div>', unsafe_allow_html=True)
+    x1_input = st.sidebar.number_input(
+        "Bravery Level (X1):", 
+        min_value=0, max_value=10, value=7, step=1
+    )
 
-with col2:
-    st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-    st.metric("Predicted Quidditch Skill (Y)", f"{y_prediction:.2f} / 10")
-    st.markdown('</div>', unsafe_allow_html=True)
+    x2_input = st.sidebar.number_input(
+        "Dark Arts Knowledge (X2):", 
+        min_value=0, max_value=10, value=4, step=1
+    )
 
-st.divider()
+    # Prediction Formula: Y = w1*X1 + w2*X2 + b
+    y_pred = w1 * x1_input + w2 * x2_input + b
 
-# ---------------------------------------------------------
-# 5. Interactive Regression Line Chart
-# ---------------------------------------------------------
-st.subheader("📈 Linear Regression Line")
+    st.subheader("🎯 Prediction Output")
+    col1, col2, col3 = st.columns(3)
 
-x_vals = np.linspace(1, 10, 100)
-y_vals = w * x_vals + b
+    with col1:
+        st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+        st.metric("Bravery (X1)", f"{x1_input} / 10")
+        st.markdown('</div>', unsafe_allow_html=True)
 
-fig = go.Figure()
+    with col2:
+        st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+        st.metric("Dark Arts Knowledge (X2)", f"{x2_input} / 10")
+        st.markdown('</div>', unsafe_allow_html=True)
 
-# Plot Regression Line
-fig.add_trace(go.Scatter(
-    x=x_vals, 
-    y=y_vals, 
-    mode='lines', 
-    name='Regression Model (y = w*x + b)',
-    line=dict(color='#740001', width=3)
-))
+    with col3:
+        st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+        st.metric("Predicted Quidditch Skill (Y)", f"{y_pred:.2f} / 10")
+        st.markdown('</div>', unsafe_allow_html=True)
 
-# Plot User Point
-fig.add_trace(go.Scatter(
-    x=[x_input], 
-    y=[y_prediction], 
-    mode='markers', 
-    name='Current Prediction Point',
-    marker=dict(color='#D3A625', size=14, symbol='star')
-))
-fig.update_layout(
-    paper_bgcolor='rgba(0,0,0,0)',
-    plot_bgcolor='rgba(30,0,5,0.5)',
-    font=dict(color='#FCE181'), # צבע פונט צהוב לכל הטקסטים בגרף
-    xaxis=dict(title="Bravery Level (X)", gridcolor='#4A000D', zerolinecolor='#740001', color='#FCE181'),
-    yaxis=dict(title="Quidditch Skill (Y)", gridcolor='#4A000D', zerolinecolor='#740001', color='#FCE181'),
-    legend=dict(font=dict(color='#FCE181')),
-    margin=dict(l=20, r=20, t=30, b=20)
-)
+    st.divider()
 
+    # Model Evaluation Section
+    st.subheader("📊 3-Level Loss Comparison & Training Evaluation")
+    
+    st.write("Comparing prediction error across model iterations:")
 
-st.plotly_chart(fig, use_container_width=True)
+    metrics_df = pd.DataFrame({
+        "Model Level": [
+            "1. Baseline Model (Mean Predictor)", 
+            "2. Single-Feature Model (Project 1)", 
+            "3. Two-Feature Model (Project 2)"
+        ],
+        "Features Used": [
+            "None (Always predicts mean Y)", 
+            "Bravery (X1)", 
+            "Bravery (X1) + Dark Arts Knowledge (X2)"
+        ],
+        "Formula": [
+            f"Y = {baseline_pred:.2f}",
+            "Y = 0.2644 * X1 + 4.1310",
+            f"Y = {w1:.4f} * X1 + {w2:.4f} * X2 + {b:.4f}"
+        ],
+        "Mean Absolute Error (Loss)": [
+            f"{loss_baseline:.4f}",
+            f"{loss_1feature:.4f}",
+            f"{loss_2features:.4f}"
+        ]
+    })
 
-# ---------------------------------------------------------
-# 6. Model Training & Evaluation Explanation (Section 5c of Guidelines)
-# ---------------------------------------------------------
-st.subheader("📊 Model Training & Loss Evaluation")
+    st.table(metrics_df)
 
-st.write("""
-This machine learning model was trained using a single-feature Linear Regression algorithm on the **Harry Potter Sorting Dataset**.
-""")
+    # Explanation Box
+    with st.expander("💡 Understanding Weights, Parameters & Loss Reduction"):
+        st.write(f"""
+        * **Weight 1 ($w_1 = {w1:.4f}$):** Impact of **Bravery**. Every 1-point increase adds ~{w1:.2f} points to Quidditch Skill.
+        * **Weight 2 ($w_2 = {w2:.4f}$):** Impact of **Dark Arts Knowledge**. Every 1-point increase adds ~{w2:.2f} points to Quidditch Skill.
+        * **Bias ($b = {b:.4f}$):** Base performance level for a student with 0 Bravery and 0 Dark Arts Knowledge.
+        * **Why Loss Reduced:** Adding $X_2$ reduced Loss from **{loss_1feature:.4f}** to **{loss_2features:.4f}**. Knowing a student's familiarity with Dark Arts provides additional context about their tactical aggression and adaptability on the broom, complementing their bravery.
+        """)
 
-# Metrics Comparison Table
-metrics_df = pd.DataFrame({
-    "Model Type": ["Baseline Model (Mean Prediction)", "Trained Linear Regression"],
-    "Formula / Method": [f"Always predicts mean y ({5.46:.2f})", f"Y = {w:.4f} * X + {b:.4f}"],
-    "Mean Absolute Error (Loss)": [f"{baseline_loss:.4f}", f"{model_loss:.4f}"]
-})
+# =========================================================
+# TAB 2: BEAT THE MODEL GAME
+# =========================================================
+with tab2:
+    st.subheader("🎮 Game Mode: Can You Beat the AI Model?")
 
-st.table(metrics_df)
+    # Initialize Session State Variables
+    if "game_state" not in st.session_state:
+        st.session_state.game_state = "rules"  # States: 'rules', 'playing', 'finished'
+        st.session_state.current_round = 0
+        st.session_state.user_score = 0
+        st.session_state.model_score = 0
+        st.session_state.history = []
 
-# Explanation Box
-with st.expander("💡 Understanding the Model & Parameters"):
-    st.write(f"""
-    * **Feature (X):** `Bravery` — Represents the student's courage rating on a scale of 1 to 10.
-    * **Target (Y):** `Quidditch Skills` — Represents the predicted flying and playing performance.
-    * **Weight ($w = {w:.4f}$):** The positive slope indicates that higher bravery increases predicted Quidditch skill.
-    * **Bias ($b = {b:.4f}$):** The baseline intercept when bravery level is zero.
-    * **Loss Comparison:** The trained model reduced the overall prediction error from **{baseline_loss:.4f}** down to **{model_loss:.4f}**, demonstrating an improved prediction over predicting a simple average.
-    """)
+    # Reset Function
+    def reset_game():
+        st.session_state.game_state = "playing"
+        st.session_state.current_round = 0
+        st.session_state.user_score = 0
+        st.session_state.model_score = 0
+        st.session_state.history = []
+
+    # 1. RULES SCREEN
+    if st.session_state.game_state == "rules":
+        st.markdown("""
+        ### 📜 Rules of the Game:
+        1. You will play **5 rounds**, each featuring a real student from the Hogwarts dataset.
+        2. In each round, you will see the student's **Bravery** and **Dark Arts Knowledge**.
+        3. **Your Goal:** Guess the student's actual **Quidditch Skill (1-10)**.
+        4. The Linear Regression Model will also generate its prediction for each round.
+        5. **Scoring:** Whichever predictor (You or the Model) is **closer to the actual value** gets **10 points**! (If equal, both get 5 points).
+        """)
+        if st.button("🚀 Start Game"):
+            reset_game()
+            st.rerun()
+
+    # 2. PLAYING SCREEN
+    elif st.session_state.game_state == "playing":
+        round_num = st.session_state.current_round
+        
+        if round_num < len(GAME_DATA):
+            student = GAME_DATA[round_num]
+            
+            st.markdown(f"### 📍 Round {round_num + 1} of {len(GAME_DATA)}")
+            
+            col_info1, col_info2, col_info3 = st.columns(3)
+            with col_info1:
+                st.info(f"🏠 **House:** {student['house']}")
+                st.info(f"🩸 **Blood Status:** {student['blood_status']}")
+            with col_info2:
+                st.metric("Bravery Level (X1)", f"{student['bravery']} / 10")
+            with col_info3:
+                st.metric("Dark Arts Knowledge (X2)", f"{student['dark_arts']} / 10")
+
+            # User Guess Form
+            with st.form(key=f"guess_form_{round_num}"):
+                user_guess = st.slider("Guess Student's Quidditch Skill (Y):", 1.0, 10.0, 5.0, 0.5)
+                submit_button = st.form_submit_button("Submit Guess 🎯")
+
+            if submit_button:
+                actual_y = student["actual_y"]
+                model_pred = w1 * student["bravery"] + w2 * student["dark_arts"] + b
+
+                user_error = abs(actual_y - user_guess)
+                model_error = abs(actual_y - model_pred)
+
+                # Determine Winner of Round
+                if user_error < model_error:
+                    winner = "User"
+                    st.session_state.user_score += 10
+                    msg = "🎉 Great job! You were closer than the model!"
+                elif model_error < user_error:
+                    winner = "Model"
+                    st.session_state.model_score += 10
+                    msg = "🤖 The AI Model won this round!"
+                else:
+                    winner = "Tie"
+                    st.session_state.user_score += 5
+                    msg = "🤝 It's a tie!"
+
+                st.session_state.history.append({
+                    "Round": round_num + 1,
+                    "House": student["house"],
+                    "X1 (Bravery)": student["bravery"],
+                    "X2 (Dark Arts)": student["dark_arts"],
+                    "Actual Y": actual_y,
+                    "Your Guess": user_guess,
+                    "Model Pred": round(model_pred, 2),
+                    "Winner": winner
+                })
+
+                st.write(msg)
+                st.info(f"**Actual Skill:** {actual_y} | **Your Error:** {user_error:.2f} | **Model Error:** {model_error:.2f}")
+
+                st.session_state.current_round += 1
+                if st.session_state.current_round >= len(GAME_DATA):
+                    st.session_state.game_state = "finished"
+                
+                st.button("Next Round ➡️")
+
+    # 3. FINISHED / SUMMARY SCREEN
+    elif st.session_state.game_state == "finished":
+        st.markdown("## 🏆 Game Over - Final Results")
+
+        u_score = st.session_state.user_score
+        m_score = st.session_state.model_score
+
+        col_res1, col_res2 = st.columns(2)
+        with col_res1:
+            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+            st.metric("Your Final Score", f"{u_score} pts")
+            st.markdown('</div>', unsafe_allow_html=True)
+        with col_res2:
+            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+            st.metric("Model Final Score", f"{m_score} pts")
+            st.markdown('</div>', unsafe_allow_html=True)
+
+        if u_score > m_score:
+            st.balloons()
+            st.success("🎉 Congratulations! You defeated the Machine Learning Model!")
+        elif m_score > u_score:
+            st.error("🤖 The AI Model won! Practice making closer estimates and try again.")
+        else:
+            st.warning("🤝 It's a tie match!")
+
+        st.subheader("📋 Rounds Summary")
+        st.table(pd.DataFrame(st.session_state.history))
+
+        if st.button("🔄 Play Again"):
+            reset_game()
+            st.rerun()
